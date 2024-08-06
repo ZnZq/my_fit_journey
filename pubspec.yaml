@@ -1,0 +1,32 @@
+name: my_fit_journey
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+
+dependencies:
+  async: ^2.11.0
+  country_flags: ^3.0.0
+  equatable: ^2.0.5
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_svg: ^2.0.10+1
+  hive_flutter: ^1.1.0
+  localization: ^2.1.1
+  xml: ^6.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - lib/i18n/
+    - assets/SVG/

@@ -1,0 +1,29 @@
+{
+  "app-title": "My Fitness Journey",
+  "english": "English",
+  "ukranian": "Ukranian",
+  "welcome-text": "This text is in english",
+  "body": {
+    "front-side": "Front side",
+    "back-side": "Back side",
+    "arms": "Arms",
+    "deltoideus": "Deltoid muscle group",
+    "biceps": "Biceps",
+    "forearms": "Forearms",
+    "triceps": "Triceps",
+    "torso": "Torso",
+    "chest": "Chest",
+    "side-abs": "Obliques",
+    "abs": "Abs",
+    "upper-back": "Upper-back",
+    "infraspinatus": "Infraspinatus",
+    "middle-back": "Middle-back",
+    "lower-back": "Lower-back",
+    "legs": "Legs",
+    "quadriceps": "Quadriceps",
+    "tibialis": "Tibialis",
+    "glutes": "Glutes",
+    "hamstrings": "Hamstrings",
+    "calves": "Calves"
+  }
+}
