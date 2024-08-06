@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:localization/localization.dart';
 import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
+import 'package:my_fit_journey/models/body_part.dart';
 import 'package:my_fit_journey/widgets/svg_highlight.dart';
 
 import 'dart:math' as math;

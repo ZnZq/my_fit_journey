@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:localization/localization.dart';
 import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
+import 'package:my_fit_journey/models/body_part.dart';
 import 'package:my_fit_journey/widgets/body_structure_selector.dart';
 
 class BodySelectorPage extends StatelessWidget {
+  static const String route = '/body-selector';
+
   final BodyStructureSelectorController controller =
       BodyStructureSelectorController();
 

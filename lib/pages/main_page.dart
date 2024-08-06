@@ -4,11 +4,14 @@ import 'package:localization/localization.dart';
 import 'package:my_fit_journey/data.dart';
 import 'package:my_fit_journey/main.dart';
 import 'package:my_fit_journey/pages/exercise_page.dart';
+import 'package:my_fit_journey/pages/exercises_page.dart';
 import 'package:my_fit_journey/pages/program_page.dart';
 import 'package:my_fit_journey/pages/profile_page.dart';
 import 'package:my_fit_journey/widgets/body_structure_selector.dart';
 
 class MainPage extends StatefulWidget {
+  static const String route = '/';
+
   const MainPage({super.key});
 
   @override
@@ -58,7 +61,7 @@ class _MainPageState extends State<MainPage> {
       body: SafeArea(
         child: [
           const ProgramPage(),
-          ExercisePage(),
+          const ExercisesPage(),
           BodyStructureSelector(
             frontSvg: maleFrontSvg,
             backSvg: maleBackSvg,
@@ -69,10 +72,11 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: [
         null,
         FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed('/add-exercise');
-            },
-            child: const Icon(Icons.add)),
+          onPressed: () {
+            Navigator.of(context).pushNamed(ExercisePage.route);
+          },
+          child: const Icon(Icons.add),
+        ),
         null,
         null,
       ][currentPageIndex],
