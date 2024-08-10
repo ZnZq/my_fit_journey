@@ -1,11 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
 import 'package:my_fit_journey/models/exercise.dart';
 import 'package:my_fit_journey/pages/exercise_page.dart';
+import 'package:my_fit_journey/storage/storage.dart';
 import 'package:my_fit_journey/widgets/svg_highlight.dart';
 
 class ExercisesPage extends StatefulWidget {
@@ -20,13 +20,13 @@ class _ExercisesPageState extends State<ExercisesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: exerciseBox.listenable(),
-      builder: (context, Box<Exercise> box, index) {
+    return ListenableBuilder(
+      listenable: Storage.exerciseStorage,
+      builder: (context, child) {
         return ListView.builder(
-          itemCount: box.length,
+          itemCount: Storage.exerciseStorage.exercises.length,
           itemBuilder: (context, index) {
-            final exercise = box.getAt(index)!;
+            final exercise = Storage.exerciseStorage.exercises[index];
             return _buildExerciseCard(context, exercise);
           },
         );
@@ -34,7 +34,6 @@ class _ExercisesPageState extends State<ExercisesPage> {
     );
   }
 
-  // Widget _buildExerciseAddCard(BuildContext context) {
   Widget _buildExerciseCard(BuildContext context, Exercise exercise) {
     return Padding(
       padding: const EdgeInsets.only(
@@ -61,11 +60,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
               ],
             ),
           ),
-          key: Key(exercise.id),
+          key: Key(exercise.id.toString()),
           onDismissed: (direction) {
-            setState(() {
-              exerciseBox.delete(exercise.id);
-            });
+            Storage.exerciseStorage.remove(exercise.id);
           },
           child: InkWell(
             onTap: () {
@@ -96,16 +93,16 @@ class _ExercisesPageState extends State<ExercisesPage> {
                               ),
                             ),
                           Spacer(),
-                          for (var spec
-                              in exerciseTypeSpecifications[exercise.type]!
-                                  .entries)
-                            Text(
-                              '${spec.key}: ${spec.value.isEnum ? spec.value.indexToEnumConverter!(exercise.specifications[spec.key]).toString().split('.').last : exercise.specifications[spec.key]}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
-                              ),
-                            ),
+                          // for (var spec
+                          //     in exerciseTypeSpecifications[exercise.type]!
+                          //         .entries)
+                          //   Text(
+                          //     '${spec.key}: ${spec.value.isEnum ? spec.value.indexToEnumConverter!(exercise.specifications[spec.key]).toString().split('.').last : exercise.specifications[spec.key]}',
+                          //     style: TextStyle(
+                          //       color: Colors.grey[600],
+                          //       fontSize: 12,
+                          //     ),
+                          //   ),
                         ],
                       ),
                     ),

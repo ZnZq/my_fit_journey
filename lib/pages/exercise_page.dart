@@ -11,6 +11,7 @@ import 'package:my_fit_journey/models/body_part.dart';
 import 'package:my_fit_journey/models/exercise.dart';
 import 'package:my_fit_journey/models/exercise_photo.dart';
 import 'package:my_fit_journey/pages/body_selector_page.dart';
+import 'package:my_fit_journey/storage/storage.dart';
 import 'package:my_fit_journey/widgets/step_item.dart';
 import 'package:my_fit_journey/widgets/svg_highlight.dart';
 import 'package:photo_view/photo_view.dart';
@@ -38,6 +39,13 @@ class ExerciseStep {
       this.isShowContinueButton = true});
 }
 
+class SpecificationValue {
+  dynamic value;
+  TextEditingController? controller;
+
+  SpecificationValue(this.value, this.controller);
+}
+
 class _ExercisePageState extends State<ExercisePage> {
   final List<ExercisePhoto> photos = [];
   final List<ExercisePhoto> deletedPhotos = [];
@@ -51,7 +59,7 @@ class _ExercisePageState extends State<ExercisePage> {
 
   int stepIndex = 0;
   late ExerciseType? exerciseTypeValue;
-  Map<String, (dynamic, TextEditingController?)> specificationValues = {};
+  Map<String, SpecificationValue> specificationValues = {};
 
   @override
   void initState() {
@@ -82,20 +90,19 @@ class _ExercisePageState extends State<ExercisePage> {
     highlightParts.addAll(exercise.bodyParts);
     photos.addAll(exercise.photos);
     setExerciseType(exercise.type);
-    exerciseTypeSpecifications[exerciseTypeValue]!.forEach((key, value) {
-      final v = exercise.specifications[key];
-      if (v == null) {
-        return;
-      }
+    // exerciseTypeSpecifications[exerciseTypeValue]!.forEach((key, value) {
+    //   final v = exercise.specifications[key];
+    //   if (v == null) {
+    //     return;
+    //   }
 
-      specificationValues[key] = (
-        value.isEnum ? value.indexToEnumConverter!(v) : v,
-        value.isEnum
-            ? null
-            : (TextEditingController()
-              ..value = TextEditingValue(text: v?.toString() ?? ''))
-      );
-    });
+    //   specificationValues[key] = SpecificationValue(
+    //       value.isEnum ? value.indexToEnumConverter!(v) : v,
+    //       value.isEnum
+    //           ? null
+    //           : (TextEditingController()
+    //             ..value = TextEditingValue(text: v?.toString() ?? '')));
+    // });
   }
 
   void setExerciseType(ExerciseType? value) {
@@ -108,13 +115,14 @@ class _ExercisePageState extends State<ExercisePage> {
     specificationValues =
         exerciseTypeSpecifications[exerciseTypeValue]!.map((key, value) {
       final dynamic v = value.initValueFn();
-      return MapEntry(key, (
-        v,
-        value.isEnum
-            ? null
-            : (TextEditingController()
-              ..value = TextEditingValue(text: v?.toString() ?? ''))
-      ));
+      return MapEntry(
+          key,
+          SpecificationValue(
+              v,
+              value.isEnum
+                  ? null
+                  : (TextEditingController()
+                    ..value = TextEditingValue(text: v?.toString() ?? ''))));
     });
   }
 
@@ -165,20 +173,20 @@ class _ExercisePageState extends State<ExercisePage> {
       ..clear()
       ..addAll(photos.where((photo) => !deletedPhotos.contains(photo)));
     exercise.type = exerciseTypeValue!;
-    exercise.specifications
-      ..clear()
-      ..addAll(exerciseTypeSpecifications[exerciseTypeValue]!.map((key, value) {
-        final spec = specificationValues[key]!;
-        final specValue = value.isEnum
-            ? spec.$1.index
-            : value.fromTextConverter!(spec.$2!.text);
-        return MapEntry(key, specValue);
-      }));
+    // exercise.specifications
+    //   ..clear()
+    //   ..addAll(exerciseTypeSpecifications[exerciseTypeValue]!.map((key, value) {
+    //     final spec = specificationValues[key]!;
+    //     final specValue = value.isEnum
+    //         ? spec.value.index
+    //         : value.fromTextConverter!(spec.controller!.text);
+    //     return MapEntry(key, specValue);
+    //   }));
 
-    if (!exercise.isInBox) {
-      exerciseBox.put(exercise.id, exercise);
+    if (Storage.exerciseStorage.contains(exercise.id)) {
+      Storage.exerciseStorage.update(exercise);
     } else {
-      exercise.save();
+      Storage.exerciseStorage.add(exercise);
     }
 
     Navigator.of(context).pop();
@@ -212,11 +220,11 @@ class _ExercisePageState extends State<ExercisePage> {
         actions: _buildExercisePhotosActions(),
         content: _buildExercisePhotos(),
       ),
-      ExerciseStep(
-        title: 'exercise-specifications'.i18n(),
-        isShowContinueButton: false,
-        content: _buildExerciseSpecifications(),
-      ),
+      // ExerciseStep(
+      //   title: 'exercise-specifications'.i18n(),
+      //   isShowContinueButton: false,
+      //   content: _buildExerciseSpecifications(),
+      // ),
     ];
   }
 
@@ -263,14 +271,14 @@ class _ExercisePageState extends State<ExercisePage> {
                           child: Text(option.$2.i18n()),
                         )
                     ],
-                    value: specificationValues[entry.key]!.$1,
+                    value: specificationValues[entry.key]!.value,
                     onChanged: (value) {
-                      specificationValues[entry.key] =
-                          (value, specificationValues[entry.key]!.$2);
+                      specificationValues[entry.key] = SpecificationValue(
+                          value, specificationValues[entry.key]!.controller);
                     },
                   )
                 : TextField(
-                    controller: specificationValues[entry.key]!.$2,
+                    controller: specificationValues[entry.key]!.controller,
                     keyboardType: entry.value.inputType,
                     inputFormatters: entry.value.inputFormatters,
                     maxLines: null,
@@ -456,8 +464,8 @@ class _ExercisePageState extends State<ExercisePage> {
             items: [
               for (var option in exerciseTypeOptions)
                 DropdownMenuItem(
-                  value: option.$1,
-                  child: Text(option.$2.i18n()),
+                  value: option.type,
+                  child: Text(option.title.i18n()),
                 )
             ],
             value: exerciseTypeValue,
@@ -501,8 +509,8 @@ class _ExercisePageState extends State<ExercisePage> {
                               PhotoViewHeroAttributes(tag: photo.path),
                           imageProvider:
                               photo.source == ExercisePhotoSource.local
-                                  ? FileImage(File(photo.path))
-                                  : NetworkImage(photo.path),
+                                  ? FileImage(File(photo.path)) as ImageProvider
+                                  : NetworkImage(photo.path) as ImageProvider,
                         ),
                       );
                     },
@@ -514,8 +522,8 @@ class _ExercisePageState extends State<ExercisePage> {
                     opacity: deletedPhotos.contains(photo) ? 0.5 : 1,
                     child: Image(
                       image: photo.source == ExercisePhotoSource.local
-                          ? FileImage(File(photo.path))
-                          : NetworkImage(photo.path),
+                          ? FileImage(File(photo.path)) as ImageProvider
+                          : NetworkImage(photo.path) as ImageProvider,
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) {

@@ -1,24 +1,14 @@
 import 'package:equatable/equatable.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
-@HiveType(typeId: 4)
 enum BodyPartPosition {
-  @HiveField(0)
   front,
-  @HiveField(1)
   back,
 }
 
-@HiveType(typeId: 5)
-class BodyPart extends HiveObject with EquatableMixin {
-  @HiveField(0)
-  final String title;
-
-  @HiveField(1)
-  final String path;
-
-  @HiveField(2)
-  final BodyPartPosition position;
+class BodyPart with EquatableMixin {
+  String title = '';
+  String path = '';
+  BodyPartPosition position = BodyPartPosition.front;
 
   BodyPart({
     required this.title,
@@ -28,25 +18,17 @@ class BodyPart extends HiveObject with EquatableMixin {
 
   @override
   List<Object?> get props => [title, path, position];
-}
 
-class BodyPartAdapter extends TypeAdapter<BodyPart> {
-  @override
-  final int typeId = 5;
+  BodyPart.fromJson(Map<String, dynamic> json)
+      : title = json['title'] ?? '',
+        path = json['path'] ?? '',
+        position = BodyPartPosition.values[json['position'] ?? 0];
 
-  @override
-  BodyPart read(BinaryReader reader) {
-    return BodyPart(
-      title: reader.readString(),
-      path: reader.readString(),
-      position: BodyPartPosition.values[reader.readInt()],
-    );
-  }
-
-  @override
-  void write(BinaryWriter writer, BodyPart obj) {
-    writer.writeString(obj.title);
-    writer.writeString(obj.path);
-    writer.writeInt(obj.position.index);
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'path': path,
+      'position': BodyPartPosition.front.index,
+    };
   }
 }

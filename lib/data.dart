@@ -1,15 +1,28 @@
 import 'package:flutter/services.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/models/body_part.dart';
 import 'package:my_fit_journey/models/exercise.dart';
 import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
 
-const bodyPartPositionOptions = <(BodyPartPosition, String)>[
-  (BodyPartPosition.front, 'body.front-side'),
-  (BodyPartPosition.back, 'body.back-side'),
+late final String maleFrontSvg;
+late final String maleBackSvg;
+
+Future initData() async {
+  maleFrontSvg = await rootBundle.loadString('assets/SVG/male_front.svg');
+  maleBackSvg = await rootBundle.loadString('assets/SVG/male_back.svg');
+}
+
+class BodyPartPositionOption {
+  final BodyPartPosition position;
+  final String title;
+
+  BodyPartPositionOption(this.position, this.title);
+}
+
+final bodyPartPositionOptions = <BodyPartPositionOption>[
+  BodyPartPositionOption(BodyPartPosition.front, 'body.front-side'),
+  BodyPartPositionOption(BodyPartPosition.back, 'body.back-side'),
 ];
 
 class BodyGroup {
@@ -122,25 +135,20 @@ Map<String, BodyGroup> getBodyStructure() {
   };
 }
 
-late final String maleFrontSvg;
-late final String maleBackSvg;
-late final Box<Exercise> exerciseBox;
+class ExerciseTypeOption {
+  final ExerciseType type;
+  final String title;
 
-Future initData() async {
-  maleFrontSvg = await rootBundle.loadString('assets/SVG/male_front.svg');
-  maleBackSvg = await rootBundle.loadString('assets/SVG/male_back.svg');
-  exerciseBox = await Hive.openBox<Exercise>(exerciseBoxName);
-  // exerciseBox.deleteFromDisk();
+  ExerciseTypeOption(this.type, this.title);
 }
 
-const exerciseTypeOptions = <(ExerciseType, String)>[
-  (ExerciseType.machineWeight, 'exercise-machine-weight'),
-  (ExerciseType.freeWeight, 'exercise-free-weight'),
-  (ExerciseType.bodyWeight, 'exercise-body-weight'),
-  (ExerciseType.cardioMachine, 'exercise-cardio-machine'),
-  (ExerciseType.stretching, 'exercise-stretching'),
-  (ExerciseType.swimming, 'exercise-swimming'),
-  (ExerciseType.other, 'exercise-other'),
+final exerciseTypeOptions = <ExerciseTypeOption>[
+  ExerciseTypeOption(ExerciseType.machineWeight, 'exercise-machine-weight'),
+  ExerciseTypeOption(ExerciseType.freeWeight, 'exercise-free-weight'),
+  ExerciseTypeOption(ExerciseType.bodyWeight, 'exercise-body-weight'),
+  ExerciseTypeOption(ExerciseType.cardioMachine, 'exercise-cardio-machine'),
+  ExerciseTypeOption(ExerciseType.swimming, 'exercise-swimming'),
+  ExerciseTypeOption(ExerciseType.other, 'exercise-other'),
 ];
 
 typedef ExerciseTypeSpecificationValueFn = dynamic Function();
@@ -148,14 +156,14 @@ typedef ToTextConverter = String Function(dynamic value);
 typedef FromTextConverter<T> = T Function(String value);
 typedef IndexToEnumConverter<T> = T Function(int index);
 
-class ExerciseTypeSpecification<T> {
+class ExerciseTypeSpecification<T, TOptions> {
   final ExerciseTypeSpecificationValueFn initValueFn;
   final FromTextConverter<T>? fromTextConverter;
   final IndexToEnumConverter<T>? indexToEnumConverter;
   final TextInputType? inputType;
   final List<TextInputFormatter>? inputFormatters;
   final bool isEnum;
-  final List<(T, String)>? options;
+  final List<TOptions>? options;
 
   ExerciseTypeSpecification({
     required this.initValueFn,
@@ -173,25 +181,25 @@ class ExerciseTypeSpecification<T> {
 final exerciseTypeSpecifications =
     <ExerciseType, Map<String, ExerciseTypeSpecification>>{
   ExerciseType.machineWeight: {
-    'weight-unit': ExerciseTypeSpecification<WeightUnit>(
+    'weight-unit': ExerciseTypeSpecification<WeightUnit, WeightUnitOption>(
       initValueFn: () => WeightUnit.kg,
       isEnum: true,
       options: weightUnitOptions,
       indexToEnumConverter: (index) => WeightUnit.values[index],
     ),
-    'min-weight': ExerciseTypeSpecification<double>(
+    'min-weight': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 5.0,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => double.parse(value),
     ),
-    'max-weight': ExerciseTypeSpecification<double>(
+    'max-weight': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 150.0,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => double.parse(value),
     ),
-    'weight-step': ExerciseTypeSpecification<double>(
+    'weight-step': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 5.0,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -199,25 +207,25 @@ final exerciseTypeSpecifications =
     ),
   },
   ExerciseType.freeWeight: {
-    'weight-unit': ExerciseTypeSpecification<WeightUnit>(
+    'weight-unit': ExerciseTypeSpecification<WeightUnit, WeightUnitOption>(
       initValueFn: () => WeightUnit.kg,
       isEnum: true,
       options: weightUnitOptions,
       indexToEnumConverter: (index) => WeightUnit.values[index],
     ),
-    'min-weight': ExerciseTypeSpecification<double>(
+    'min-weight': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 5.0,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => double.parse(value),
     ),
-    'max-weight': ExerciseTypeSpecification<double>(
+    'max-weight': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 150.0,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => double.parse(value),
     ),
-    'weight-step': ExerciseTypeSpecification<double>(
+    'weight-step': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 5.0,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -226,47 +234,46 @@ final exerciseTypeSpecifications =
   },
   ExerciseType.bodyWeight: {},
   ExerciseType.cardioMachine: {
-    'min-speed': ExerciseTypeSpecification<double>(
+    'min-speed': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 1,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => double.parse(value),
     ),
-    'max-speed': ExerciseTypeSpecification<double>(
+    'max-speed': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 10,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => double.parse(value),
     ),
-    'speed-step': ExerciseTypeSpecification<double>(
+    'speed-step': ExerciseTypeSpecification<double, void>(
       initValueFn: () => 1,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => double.parse(value),
     ),
-    'min-intensity-level': ExerciseTypeSpecification<int>(
+    'min-intensity-level': ExerciseTypeSpecification<int, void>(
       initValueFn: () => 1,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => int.parse(value),
     ),
-    'max-intensity-level': ExerciseTypeSpecification<int>(
+    'max-intensity-level': ExerciseTypeSpecification<int, void>(
       initValueFn: () => 10,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => int.parse(value),
     ),
-    'intensity-level-step': ExerciseTypeSpecification<int>(
+    'intensity-level-step': ExerciseTypeSpecification<int, void>(
       initValueFn: () => 1,
       inputType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       fromTextConverter: (value) => int.parse(value),
     ),
   },
-  ExerciseType.stretching: {},
   ExerciseType.swimming: {},
   ExerciseType.other: {
-    'details': ExerciseTypeSpecification<String>(
+    'details': ExerciseTypeSpecification<String, void>(
       initValueFn: () => '',
       inputType: TextInputType.multiline,
       fromTextConverter: (value) => value,
@@ -279,7 +286,14 @@ enum WeightUnit {
   lb,
 }
 
-const weightUnitOptions = <(WeightUnit, String)>[
-  (WeightUnit.kg, 'kg'),
-  (WeightUnit.lb, 'lb'),
+class WeightUnitOption {
+  final WeightUnit unit;
+  final String title;
+
+  WeightUnitOption(this.unit, this.title);
+}
+
+final weightUnitOptions = <WeightUnitOption>[
+  WeightUnitOption(WeightUnit.kg, 'kg'),
+  WeightUnitOption(WeightUnit.lb, 'lb'),
 ];
