@@ -6,11 +6,11 @@ class BodyWeightExercise extends Exercise {
     required super.description,
     required super.bodyParts,
     required super.photos,
-    super.type = ExerciseType.other,
+    super.type = ExerciseType.bodyWeight,
     super.id,
   });
 
-  BodyWeightExercise.empty() : super.empty();
+  BodyWeightExercise.empty() : super.empty(ExerciseType.bodyWeight);
 
   BodyWeightExercise.fromJson(super.json) : super.fromJson();
 }

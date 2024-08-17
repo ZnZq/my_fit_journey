@@ -37,8 +37,11 @@ class Storage {
     final path = await exercisePath;
     final rawExercises = await readJson<List<dynamic>>(path, []);
 
-    final exercises =
-        rawExercises.map((e) => ExerciseFactory.fromJson(e)).toList();
+    final exercises = rawExercises
+        .map((e) => ExerciseFactory.fromJson(e))
+        .where((e) => e != null)
+        .cast<Exercise>()
+        .toList();
 
     return exercises;
   }

@@ -151,6 +151,9 @@ final exerciseTypeOptions = <ExerciseTypeOption>[
   ExerciseTypeOption(ExerciseType.other, 'exercise-other'),
 ];
 
+final exerciseTypeMap =
+    Map.fromEntries(exerciseTypeOptions.map((e) => MapEntry(e.type, e.title)));
+
 typedef ExerciseTypeSpecificationValueFn = dynamic Function();
 typedef ToTextConverter = String Function(dynamic value);
 typedef FromTextConverter<T> = T Function(String value);

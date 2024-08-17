@@ -30,7 +30,7 @@ class Exercise {
     this.id = id ?? uuid.v4();
   }
 
-  Exercise.empty() {
+  Exercise.empty(this.type) {
     id = uuid.v4();
   }
 

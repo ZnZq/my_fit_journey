@@ -13,7 +13,7 @@ class OtherExercise extends Exercise {
     super.id,
   });
 
-  OtherExercise.empty() : super.empty();
+  OtherExercise.empty() : super.empty(ExerciseType.other);
 
   OtherExercise.fromJson(super.json) : super.fromJson();
 }

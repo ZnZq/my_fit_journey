@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:my_fit_journey/models/body_weight_exercise.dart';
 import 'package:my_fit_journey/models/cardio_machine_exercise.dart';
 import 'package:my_fit_journey/models/exercise.dart';
@@ -7,8 +8,8 @@ import 'package:my_fit_journey/models/other_exercise.dart';
 import 'package:my_fit_journey/models/swimming_exercise.dart';
 
 class ExerciseFactory {
-  static Exercise fromJson(Map json) {
-    switch (ExerciseType.values[json['type']]) {
+  static Exercise? fromJson(Map json) {
+    switch (ExerciseType.values[json['type'] ?? -1]) {
       case ExerciseType.machineWeight:
         return MachineWeightExercise.fromJson(json);
       case ExerciseType.freeWeight:
@@ -22,7 +23,10 @@ class ExerciseFactory {
       case ExerciseType.other:
         return OtherExercise.fromJson(json);
       default:
-        throw Exception('Unknown exercise type');
+        if (kDebugMode) {
+          print('Unknown exercise type ${json['type']}');
+        }
+        return null;
     }
   }
 }

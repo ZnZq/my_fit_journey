@@ -23,7 +23,7 @@ class CardioMachineExercise extends Exercise {
     super.id,
   });
 
-  CardioMachineExercise.empty() : super.empty();
+  CardioMachineExercise.empty() : super.empty(ExerciseType.cardioMachine);
 
   CardioMachineExercise.fromJson(super.json)
       : minSpeed = json['minSpeed'] ?? 0.0,

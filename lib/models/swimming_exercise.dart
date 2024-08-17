@@ -16,7 +16,7 @@ class SwimmingExercise extends Exercise {
     super.id,
   });
 
-  SwimmingExercise.empty() : super.empty();
+  SwimmingExercise.empty() : super.empty(ExerciseType.swimming);
 
   SwimmingExercise.fromJson(super.json)
       : handMethod = json['handMethod'] ?? '',

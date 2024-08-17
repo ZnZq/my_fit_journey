@@ -17,10 +17,11 @@ class MachineWeightExercise extends Exercise {
     super.id,
   });
 
-  MachineWeightExercise.empty() : super.empty();
+  MachineWeightExercise.empty() : super.empty(ExerciseType.machineWeight);
 
   MachineWeightExercise.fromJson(super.json)
-      : weightUnit = WeightUnit.values[json['weightUnit'] ?? 0],
+      : weightUnit =
+            WeightUnit.values[json['weightUnit'] ?? WeightUnit.kg.index],
         minWeight = json['minWeight'] ?? 0.0,
         maxWeight = json['maxWeight'] ?? 0.0,
         weightStep = json['weightStep'] ?? 0.0,

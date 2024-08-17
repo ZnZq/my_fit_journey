@@ -49,7 +49,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
               children: [
                 Text('Delete',
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold)),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    )),
                 Padding(
                   padding: const EdgeInsets.all(globalPadding * 2),
                   child: Icon(
@@ -93,16 +95,6 @@ class _ExercisesPageState extends State<ExercisesPage> {
                               ),
                             ),
                           Spacer(),
-                          // for (var spec
-                          //     in exerciseTypeSpecifications[exercise.type]!
-                          //         .entries)
-                          //   Text(
-                          //     '${spec.key}: ${spec.value.isEnum ? spec.value.indexToEnumConverter!(exercise.specifications[spec.key]).toString().split('.').last : exercise.specifications[spec.key]}',
-                          //     style: TextStyle(
-                          //       color: Colors.grey[600],
-                          //       fontSize: 12,
-                          //     ),
-                          //   ),
                         ],
                       ),
                     ),

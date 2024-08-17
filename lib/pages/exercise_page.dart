@@ -3,13 +3,18 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:localization/localization.dart';
 import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
 import 'package:my_fit_journey/models/body_part.dart';
+import 'package:my_fit_journey/models/cardio_machine_exercise.dart';
 import 'package:my_fit_journey/models/exercise.dart';
 import 'package:my_fit_journey/models/exercise_photo.dart';
+import 'package:my_fit_journey/models/free_weight_exercise.dart';
+import 'package:my_fit_journey/models/machine_weight_exercise.dart';
+import 'package:my_fit_journey/models/other_exercise.dart';
 import 'package:my_fit_journey/pages/body_selector_page.dart';
 import 'package:my_fit_journey/storage/storage.dart';
 import 'package:my_fit_journey/widgets/step_item.dart';
@@ -52,14 +57,24 @@ class _ExercisePageState extends State<ExercisePage> {
   final highlightParts = <BodyPart>[];
   final _formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
+
   late final Map<String, BodyGroup> bodyStructure;
   late final PageController _pageViewController;
+
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
+  late final TextEditingController _minWeightController;
+  late final TextEditingController _maxWeightController;
+  late final TextEditingController _weightStepController;
+  late final TextEditingController _minSpeedController;
+  late final TextEditingController _maxSpeedController;
+  late final TextEditingController _speedStepController;
+  late final TextEditingController _minIntensityController;
+  late final TextEditingController _maxIntensityController;
+  late final TextEditingController _intensityStepController;
+  late final TextEditingController _detailsController;
 
-  int stepIndex = 0;
-  late ExerciseType? exerciseTypeValue;
-  Map<String, SpecificationValue> specificationValues = {};
+  WeightUnit weightUnitValue = WeightUnit.kg;
 
   @override
   void initState() {
@@ -67,6 +82,27 @@ class _ExercisePageState extends State<ExercisePage> {
     _pageViewController = PageController();
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
+
+    if (widget.exercise is MachineWeightExercise ||
+        widget.exercise is FreeWeightExercise) {
+      _minWeightController = TextEditingController();
+      _maxWeightController = TextEditingController();
+      _weightStepController = TextEditingController();
+    }
+
+    if (widget.exercise is CardioMachineExercise) {
+      _minSpeedController = TextEditingController();
+      _maxSpeedController = TextEditingController();
+      _speedStepController = TextEditingController();
+      _minIntensityController = TextEditingController();
+      _maxIntensityController = TextEditingController();
+      _intensityStepController = TextEditingController();
+    }
+
+    if (widget.exercise is OtherExercise) {
+      _detailsController = TextEditingController();
+    }
+
     loadExerciseData();
 
     super.initState();
@@ -81,7 +117,6 @@ class _ExercisePageState extends State<ExercisePage> {
   void loadExerciseData() {
     final exercise = widget.exercise;
     if (exercise == null) {
-      setExerciseType(ExerciseType.machineWeight);
       return;
     }
 
@@ -89,41 +124,28 @@ class _ExercisePageState extends State<ExercisePage> {
     _descriptionController.text = exercise.description;
     highlightParts.addAll(exercise.bodyParts);
     photos.addAll(exercise.photos);
-    setExerciseType(exercise.type);
-    // exerciseTypeSpecifications[exerciseTypeValue]!.forEach((key, value) {
-    //   final v = exercise.specifications[key];
-    //   if (v == null) {
-    //     return;
-    //   }
 
-    //   specificationValues[key] = SpecificationValue(
-    //       value.isEnum ? value.indexToEnumConverter!(v) : v,
-    //       value.isEnum
-    //           ? null
-    //           : (TextEditingController()
-    //             ..value = TextEditingValue(text: v?.toString() ?? '')));
-    // });
-  }
-
-  void setExerciseType(ExerciseType? value) {
-    exerciseTypeValue = value;
-    if (exerciseTypeValue == null) {
-      specificationValues.clear();
-      return;
+    if (exercise is MachineWeightExercise) {
+      _minWeightController.text = exercise.minWeight.toString();
+      _maxWeightController.text = exercise.maxWeight.toString();
+      _weightStepController.text = exercise.weightStep.toString();
     }
-
-    specificationValues =
-        exerciseTypeSpecifications[exerciseTypeValue]!.map((key, value) {
-      final dynamic v = value.initValueFn();
-      return MapEntry(
-          key,
-          SpecificationValue(
-              v,
-              value.isEnum
-                  ? null
-                  : (TextEditingController()
-                    ..value = TextEditingValue(text: v?.toString() ?? ''))));
-    });
+    if (exercise is FreeWeightExercise) {
+      _minWeightController.text = exercise.minWeight.toString();
+      _maxWeightController.text = exercise.maxWeight.toString();
+      _weightStepController.text = exercise.weightStep.toString();
+    }
+    if (exercise is CardioMachineExercise) {
+      _minSpeedController.text = exercise.minSpeed.toString();
+      _maxSpeedController.text = exercise.maxSpeed.toString();
+      _speedStepController.text = exercise.speedStep.toString();
+      _minIntensityController.text = exercise.minIntensity.toString();
+      _maxIntensityController.text = exercise.maxIntensity.toString();
+      _intensityStepController.text = exercise.intensityStep.toString();
+    }
+    if (exercise is OtherExercise) {
+      _detailsController.text = exercise.details;
+    }
   }
 
   @override
@@ -131,29 +153,38 @@ class _ExercisePageState extends State<ExercisePage> {
     final steps = _getSteps();
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'new'.i18n([exerciseTypeMap[widget.exercise!.type]!.i18n()]),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onSave,
         child: Icon(Icons.save),
       ),
       body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: globalPadding),
-                for (var step in steps)
-                  StepItem(
-                    index: steps.indexOf(step) + 1,
-                    title: Text(step.title),
-                    actions: Row(children: step.actions),
-                    child: step.content,
+        child: widget.exercise == null
+            ? Center(
+                child: Text('no-exercise-selected'.i18n()),
+              )
+            : Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: globalPadding),
+                      for (var step in steps)
+                        StepItem(
+                          index: steps.indexOf(step) + 1,
+                          title: Text(step.title),
+                          actions: Row(children: step.actions),
+                          child: step.content,
+                        ),
+                      const SizedBox(height: globalPadding),
+                    ],
                   ),
-                const SizedBox(height: globalPadding),
-              ],
-            ),
-          ),
-        ),
+                ),
+              ),
       ),
     );
   }
@@ -163,7 +194,7 @@ class _ExercisePageState extends State<ExercisePage> {
       return;
     }
 
-    final exercise = widget.exercise ?? Exercise.empty();
+    final exercise = widget.exercise!;
     exercise.title = _titleController.text;
     exercise.description = _descriptionController.text;
     exercise.bodyParts
@@ -172,16 +203,30 @@ class _ExercisePageState extends State<ExercisePage> {
     exercise.photos
       ..clear()
       ..addAll(photos.where((photo) => !deletedPhotos.contains(photo)));
-    exercise.type = exerciseTypeValue!;
-    // exercise.specifications
-    //   ..clear()
-    //   ..addAll(exerciseTypeSpecifications[exerciseTypeValue]!.map((key, value) {
-    //     final spec = specificationValues[key]!;
-    //     final specValue = value.isEnum
-    //         ? spec.value.index
-    //         : value.fromTextConverter!(spec.controller!.text);
-    //     return MapEntry(key, specValue);
-    //   }));
+
+    if (exercise is MachineWeightExercise) {
+      exercise.weightUnit = weightUnitValue;
+      exercise.minWeight = double.parse(_minWeightController.text);
+      exercise.maxWeight = double.parse(_maxWeightController.text);
+      exercise.weightStep = double.parse(_weightStepController.text);
+    }
+    if (exercise is FreeWeightExercise) {
+      exercise.weightUnit = weightUnitValue;
+      exercise.minWeight = double.parse(_minWeightController.text);
+      exercise.maxWeight = double.parse(_maxWeightController.text);
+      exercise.weightStep = double.parse(_weightStepController.text);
+    }
+    if (exercise is CardioMachineExercise) {
+      exercise.minSpeed = double.parse(_minSpeedController.text);
+      exercise.maxSpeed = double.parse(_maxSpeedController.text);
+      exercise.speedStep = double.parse(_speedStepController.text);
+      exercise.minIntensity = int.parse(_minIntensityController.text);
+      exercise.maxIntensity = int.parse(_maxIntensityController.text);
+      exercise.intensityStep = int.parse(_intensityStepController.text);
+    }
+    if (exercise is OtherExercise) {
+      exercise.details = _detailsController.text;
+    }
 
     if (Storage.exerciseStorage.contains(exercise.id)) {
       Storage.exerciseStorage.update(exercise);
@@ -220,12 +265,203 @@ class _ExercisePageState extends State<ExercisePage> {
         actions: _buildExercisePhotosActions(),
         content: _buildExercisePhotos(),
       ),
-      // ExerciseStep(
-      //   title: 'exercise-specifications'.i18n(),
-      //   isShowContinueButton: false,
-      //   content: _buildExerciseSpecifications(),
-      // ),
+      if (widget.exercise is MachineWeightExercise ||
+          widget.exercise is FreeWeightExercise)
+        ExerciseStep(
+          title: 'exercise-specifications'.i18n(),
+          content: _buildWeightExerciseSpecifications(),
+        ),
+      if (widget.exercise is CardioMachineExercise)
+        ExerciseStep(
+          title: 'exercise-specifications'.i18n(),
+          content: _buildCardioMachineExerciseSpecifications(),
+        ),
+      if (widget.exercise is OtherExercise)
+        ExerciseStep(
+          title: 'exercise-specifications'.i18n(),
+          content: _buildOtherExerciseSpecifications(),
+        ),
     ];
+  }
+
+  Widget _buildOtherExerciseSpecifications() {
+    return Padding(
+      padding: const EdgeInsets.only(right: globalPadding * 2),
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _detailsController,
+            autofocus: false,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            decoration: InputDecoration(
+              labelText: 'details'.i18n(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCardioMachineExerciseSpecifications() {
+    return Padding(
+      padding: const EdgeInsets.only(right: globalPadding * 2),
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _minSpeedController,
+            keyboardType: TextInputType.number,
+            validator: _doubleValidatorFn(min: 0),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'min-speed'.i18n(),
+            ),
+          ),
+          TextFormField(
+            controller: _maxSpeedController,
+            keyboardType: TextInputType.number,
+            validator: _doubleValidatorFn(min: 1),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'max-speed'.i18n(),
+            ),
+          ),
+          TextFormField(
+            controller: _speedStepController,
+            keyboardType: TextInputType.number,
+            validator: _doubleValidatorFn(min: 1),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'speed-step'.i18n(),
+            ),
+          ),
+          SizedBox(height: globalPadding * 2),
+          TextFormField(
+            controller: _minIntensityController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            validator: _intValidatorFn(min: 0),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'min-intensity'.i18n(),
+            ),
+          ),
+          TextFormField(
+            controller: _maxIntensityController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            validator: _intValidatorFn(min: 1),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'max-intensity'.i18n(),
+            ),
+          ),
+          TextFormField(
+            controller: _intensityStepController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            validator: _intValidatorFn(min: 1),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'intensity-step'.i18n(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeightExerciseSpecifications() {
+    return Padding(
+      padding: const EdgeInsets.only(right: globalPadding * 2),
+      child: Column(
+        children: [
+          DropdownButtonFormField<WeightUnit>(
+            items: [
+              for (var option in weightUnitOptions)
+                DropdownMenuItem(
+                  value: option.unit,
+                  child: Text(option.title.i18n()),
+                )
+            ],
+            value: weightUnitValue,
+            onChanged: (value) {
+              setState(() {
+                weightUnitValue = value!;
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'weight-unit'.i18n(),
+            ),
+          ),
+          TextFormField(
+            controller: _minWeightController,
+            keyboardType: TextInputType.number,
+            validator: _doubleValidatorFn(min: 0),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'min-weight'.i18n(),
+            ),
+          ),
+          TextFormField(
+            controller: _maxWeightController,
+            keyboardType: TextInputType.number,
+            validator: _doubleValidatorFn(min: 1),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'max-weight'.i18n(),
+            ),
+          ),
+          TextFormField(
+            controller: _weightStepController,
+            keyboardType: TextInputType.number,
+            validator: _doubleValidatorFn(min: 1),
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              labelText: 'weight-step'.i18n(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  FormFieldValidator<String>? _intValidatorFn({int? min}) {
+    return (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter value';
+      }
+
+      final number = int.tryParse(value);
+      if (number == null) {
+        return 'Please enter valid number';
+      }
+
+      if (min != null && number < min) {
+        return 'Please enter number greater than $min';
+      }
+
+      return null;
+    };
+  }
+
+  FormFieldValidator<String>? _doubleValidatorFn({double? min}) {
+    return (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter value';
+      }
+
+      final number = double.tryParse(value);
+      if (number == null) {
+        return 'Please enter valid number';
+      }
+
+      if (min != null && number < min) {
+        return 'Please enter number greater than $min';
+      }
+
+      return null;
+    };
   }
 
   List<Widget> _buildRargetMusclesActions() {
@@ -249,48 +485,6 @@ class _ExercisePageState extends State<ExercisePage> {
       ),
       SizedBox(width: globalPadding),
     ];
-  }
-
-  Widget _buildExerciseSpecifications() {
-    if (specificationValues.isEmpty) {
-      return Text('No specifications for selected exercise type');
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(right: globalPadding * 2),
-      child: Column(
-        children: [
-          for (var entry
-              in exerciseTypeSpecifications[exerciseTypeValue]!.entries)
-            entry.value.isEnum
-                ? DropdownButtonFormField<dynamic>(
-                    items: [
-                      for (var option in entry.value.options!)
-                        DropdownMenuItem(
-                          value: option.$1,
-                          child: Text(option.$2.i18n()),
-                        )
-                    ],
-                    value: specificationValues[entry.key]!.value,
-                    onChanged: (value) {
-                      specificationValues[entry.key] = SpecificationValue(
-                          value, specificationValues[entry.key]!.controller);
-                    },
-                  )
-                : TextField(
-                    controller: specificationValues[entry.key]!.controller,
-                    keyboardType: entry.value.inputType,
-                    inputFormatters: entry.value.inputFormatters,
-                    maxLines: null,
-                    autofocus: false,
-                    decoration: InputDecoration(
-                      labelText: entry.key,
-                    ),
-                  ),
-          SizedBox(height: globalPadding),
-        ],
-      ),
-    );
   }
 
   List<Widget> _buildExercisePhotosActions() {
@@ -457,36 +651,10 @@ class _ExercisePageState extends State<ExercisePage> {
               labelText: 'description'.i18n(),
             ),
           ),
-          DropdownButtonFormField<ExerciseType>(
-            decoration: InputDecoration(
-              labelText: 'exercise-type'.i18n(),
-            ),
-            items: [
-              for (var option in exerciseTypeOptions)
-                DropdownMenuItem(
-                  value: option.type,
-                  child: Text(option.title.i18n()),
-                )
-            ],
-            value: exerciseTypeValue,
-            onChanged: _onExerciseTypeChanged,
-            validator: (value) {
-              if (value == null) {
-                return 'Please select exercise type';
-              }
-              return null;
-            },
-          ),
           SizedBox(height: globalPadding * 2),
         ],
       ),
     );
-  }
-
-  void _onExerciseTypeChanged(ExerciseType? value) {
-    setState(() {
-      setExerciseType(value);
-    });
   }
 
   Widget _buildPhotoCard(BuildContext context, ExercisePhoto photo) {

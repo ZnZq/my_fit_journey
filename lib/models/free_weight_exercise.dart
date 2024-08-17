@@ -17,7 +17,7 @@ class FreeWeightExercise extends Exercise {
     super.id,
   });
 
-  FreeWeightExercise.empty() : super.empty();
+  FreeWeightExercise.empty() : super.empty(ExerciseType.freeWeight);
 
   FreeWeightExercise.fromJson(super.json)
       : weightUnit = WeightUnit.values[json['weightUnit'] ?? 0],
