@@ -3,9 +3,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:localization/localization.dart';
 import 'package:my_fit_journey/data.dart';
 import 'package:my_fit_journey/models/exercise.dart';
+import 'package:my_fit_journey/models/program.dart';
 import 'package:my_fit_journey/pages/exercise_page.dart';
 import 'package:my_fit_journey/pages/body_selector_page.dart';
 import 'package:my_fit_journey/pages/main_page.dart';
+import 'package:my_fit_journey/pages/program_page.dart';
 import 'package:my_fit_journey/storage/storage.dart';
 
 void main() async {
@@ -64,18 +66,28 @@ class MainAppState extends State<MainApp> {
       initialRoute: '/',
       routes: {
         MainPage.route: (context) => const MainPage(),
-        // ExercisePage.route: (context) => const ExercisePage(),
         BodySelectorPage.route: (context) => BodySelectorPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == ExercisePage.route) {
           final exercise = settings.arguments as Exercise?;
-          return MaterialPageRoute(
-            builder: (context) => ExercisePage(exercise: exercise),
-          );
+          if (exercise != null) {
+            return MaterialPageRoute(
+              builder: (context) => ExercisePage(exercise: exercise),
+            );
+          }
         }
 
-        assert(false, 'Need to implement ${settings.name}');
+        if (settings.name == ProgramPage.route) {
+          final program = settings.arguments as Program?;
+          if (program != null) {
+            return MaterialPageRoute(
+              builder: (context) => ProgramPage(program: program),
+            );
+          }
+        }
+
+        assert(false, 'Need to implement ${settings.name} or empty arguments');
 
         return null;
       },

@@ -4,12 +4,15 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:my_fit_journey/factories/exercise_factory.dart';
 import 'package:my_fit_journey/models/exercise.dart';
+import 'package:my_fit_journey/models/program.dart';
+import 'package:my_fit_journey/storage/program_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:my_fit_journey/storage/exercise_storage.dart';
 
 class Storage {
   static late final ExerciseStorage exerciseStorage;
+  static late final ProgramStorage programStorage;
 
   static Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -21,16 +24,41 @@ class Storage {
     return '$path/exercises.json';
   }
 
+  static Future<String> get programPath async {
+    final path = await localPath;
+    return '$path/programs.json';
+  }
+
   static Future<void> initialize() async {
     final exercises = await readExercises();
+    final programs = await readPrograms();
+
     exerciseStorage = ExerciseStorage(exercises)..addListener(_onSaveExercises);
+    programStorage = ProgramStorage(programs)..addListener(_onSavePrograms);
+  }
+
+  static void _onSavePrograms() async {
+    final programs = programStorage.items;
+    final path = await programPath;
+
+    writeJson(path, programs);
   }
 
   static void _onSaveExercises() async {
-    final exercises = exerciseStorage.exercises;
+    final exercises = exerciseStorage.items;
     final path = await exercisePath;
 
     writeJson(path, exercises);
+  }
+
+  static Future<List<Program>> readPrograms() async {
+    final path = await programPath;
+    final rawPrograms = await readJson<List<dynamic>>(path, []);
+
+    final programs =
+        rawPrograms.map((e) => Program.fromJson(e)).cast<Program>().toList();
+
+    return programs;
   }
 
   static Future<List<Exercise>> readExercises() async {

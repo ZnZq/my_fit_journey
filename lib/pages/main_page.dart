@@ -10,9 +10,11 @@ import 'package:my_fit_journey/models/exercise.dart';
 import 'package:my_fit_journey/models/free_weight_exercise.dart';
 import 'package:my_fit_journey/models/machine_weight_exercise.dart';
 import 'package:my_fit_journey/models/other_exercise.dart';
+import 'package:my_fit_journey/models/program.dart';
 import 'package:my_fit_journey/models/swimming_exercise.dart';
 import 'package:my_fit_journey/pages/exercise_page.dart';
 import 'package:my_fit_journey/pages/exercises_page.dart';
+import 'package:my_fit_journey/pages/program_page.dart';
 import 'package:my_fit_journey/pages/programs_page.dart';
 import 'package:my_fit_journey/pages/profile_page.dart';
 import 'package:my_fit_journey/widgets/body_structure_selector.dart';
@@ -44,7 +46,7 @@ class Destination {
 
 class _MainPageState extends State<MainPage> {
   int currentPageIndex = 0;
-  final _expandableFabStateKey = GlobalKey<ExpandableFabState>();
+  final _exercisesExpandableFabStateKey = GlobalKey<ExpandableFabState>();
 
   List<Destination> getDestinations(BuildContext context) {
     return [
@@ -54,7 +56,9 @@ class _MainPageState extends State<MainPage> {
         page: const ProgramsPage(),
         floatingActionButton: FloatingActionButton(
           heroTag: 'floatingActionButton',
-          onPressed: () {},
+          onPressed: () {
+            _addProgram(Program.empty());
+          },
           child: const Icon(Icons.add),
         ),
       ),
@@ -64,7 +68,7 @@ class _MainPageState extends State<MainPage> {
         page: const ExercisesPage(),
         floatingActionButtonLocation: ExpandableFab.location,
         floatingActionButton: ExpandableFab(
-          key: _expandableFabStateKey,
+          key: _exercisesExpandableFabStateKey,
           type: ExpandableFabType.up,
           distance: 70,
           childrenAnimation: ExpandableFabAnimation.none,
@@ -208,10 +212,15 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  void _addProgram(Program program) {
+    Navigator.of(context).pushNamed(ProgramPage.route, arguments: program);
+  }
+
   void _addExercise(Exercise exercise) {
-    if (_expandableFabStateKey.currentState!.isOpen) {
-      _expandableFabStateKey.currentState!.toggle();
+    if (_exercisesExpandableFabStateKey.currentState!.isOpen) {
+      _exercisesExpandableFabStateKey.currentState!.toggle();
     }
+
     Navigator.of(context).pushNamed(ExercisePage.route, arguments: exercise);
   }
 }

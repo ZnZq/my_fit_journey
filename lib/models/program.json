@@ -1,0 +1,49 @@
+{
+    "name": "program name",
+    "description": "program description",
+    "exercises": [
+        {
+            "type": "exercise",
+            "exerciseId": "exerciseId",
+            "sets": 3,
+            "reps": 10,
+            "weight": 100,
+            "weightUnit": "kg",
+            "rest": 60
+        },
+        {
+            "mode": "complex",
+            "reps": 3,
+            "rest": 60,
+            "exercises": [
+                {
+                    "type": "exercise",
+                    "exerciseId": "exerciseId",
+                    "sets": 3,
+                    "reps": 10,
+                    "weight": 100,
+                    "weightUnit": "kg",
+                    "rest": 60
+                },
+                {
+                    "type": "exercise",
+                    "exerciseId": "exerciseId",
+                    "sets": 3,
+                    "reps": 10,
+                    "weight": 100,
+                    "weightUnit": "kg",
+                    "rest": 60
+                },
+                {
+                    "type": "exercise",
+                    "exerciseId": "exerciseId",
+                    "sets": 3,
+                    "reps": 10,
+                    "weight": 100,
+                    "weightUnit": "kg",
+                    "rest": 60
+                }
+            ]
+        }
+    ]
+}

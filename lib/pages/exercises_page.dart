@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
@@ -29,7 +27,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
         builder: (context, child) {
           return ReorderableListView(
             children: [
-              for (final exercise in Storage.exerciseStorage.exercises)
+              for (final exercise in Storage.exerciseStorage.items)
                 _buildExerciseCard(context, exercise),
             ],
             onReorder: (oldIndex, newIndex) {
@@ -90,6 +88,14 @@ class _ExercisesPageState extends State<ExercisesPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Chip(
+                          padding: EdgeInsets.all(globalPadding / 2),
+                          label: Text(
+                            exercise.type.toString().split('.').last,
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          backgroundColor: Colors.grey[300],
+                        ),
                         Text(exercise.title),
                         if (exercise.description.isNotEmpty)
                           Text(

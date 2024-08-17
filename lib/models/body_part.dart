@@ -17,7 +17,7 @@ class BodyPart with EquatableMixin {
   });
 
   @override
-  List<Object?> get props => [title, path, position];
+  List<Object?> get props => [path, position];
 
   BodyPart.fromJson(Map<String, dynamic> json)
       : title = json['title'] ?? '',

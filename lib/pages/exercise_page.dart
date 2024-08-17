@@ -12,6 +12,7 @@ import 'package:my_fit_journey/models/body_part.dart';
 import 'package:my_fit_journey/models/cardio_machine_exercise.dart';
 import 'package:my_fit_journey/models/exercise.dart';
 import 'package:my_fit_journey/models/exercise_photo.dart';
+import 'package:my_fit_journey/models/exercise_step.dart';
 import 'package:my_fit_journey/models/free_weight_exercise.dart';
 import 'package:my_fit_journey/models/machine_weight_exercise.dart';
 import 'package:my_fit_journey/models/other_exercise.dart';
@@ -23,32 +24,12 @@ import 'package:photo_view/photo_view.dart';
 
 class ExercisePage extends StatefulWidget {
   static const String route = '/exercise';
-  final Exercise? exercise;
+  final Exercise exercise;
 
-  const ExercisePage({super.key, this.exercise});
+  const ExercisePage({super.key, required this.exercise});
 
   @override
   State<ExercisePage> createState() => _ExercisePageState();
-}
-
-class ExerciseStep {
-  final String title;
-  final Widget content;
-  final List<Widget> actions;
-  final bool isShowContinueButton;
-
-  ExerciseStep(
-      {required this.title,
-      required this.content,
-      this.actions = const [],
-      this.isShowContinueButton = true});
-}
-
-class SpecificationValue {
-  dynamic value;
-  TextEditingController? controller;
-
-  SpecificationValue(this.value, this.controller);
 }
 
 class _ExercisePageState extends State<ExercisePage> {
@@ -58,7 +39,6 @@ class _ExercisePageState extends State<ExercisePage> {
   final _formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
 
-  late final Map<String, BodyGroup> bodyStructure;
   late final PageController _pageViewController;
 
   late final TextEditingController _titleController;
@@ -78,7 +58,6 @@ class _ExercisePageState extends State<ExercisePage> {
 
   @override
   void initState() {
-    bodyStructure = getBodyStructure();
     _pageViewController = PageController();
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
@@ -116,9 +95,6 @@ class _ExercisePageState extends State<ExercisePage> {
 
   void loadExerciseData() {
     final exercise = widget.exercise;
-    if (exercise == null) {
-      return;
-    }
 
     _titleController.text = exercise.title;
     _descriptionController.text = exercise.description;
@@ -155,7 +131,7 @@ class _ExercisePageState extends State<ExercisePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'new'.i18n([exerciseTypeMap[widget.exercise!.type]!.i18n()]),
+          'new'.i18n([exerciseTypeMap[widget.exercise.type]!.i18n()]),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -163,28 +139,24 @@ class _ExercisePageState extends State<ExercisePage> {
         child: Icon(Icons.save),
       ),
       body: SafeArea(
-        child: widget.exercise == null
-            ? Center(
-                child: Text('no-exercise-selected'.i18n()),
-              )
-            : Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: globalPadding),
-                      for (var step in steps)
-                        StepItem(
-                          index: steps.indexOf(step) + 1,
-                          title: Text(step.title),
-                          actions: Row(children: step.actions),
-                          child: step.content,
-                        ),
-                      const SizedBox(height: globalPadding),
-                    ],
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: globalPadding),
+                for (var step in steps)
+                  StepItem(
+                    index: steps.indexOf(step) + 1,
+                    title: Text(step.title),
+                    actions: Row(children: step.actions),
+                    child: step.content,
                   ),
-                ),
-              ),
+                const SizedBox(height: globalPadding),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -194,7 +166,7 @@ class _ExercisePageState extends State<ExercisePage> {
       return;
     }
 
-    final exercise = widget.exercise!;
+    final exercise = widget.exercise;
     exercise.title = _titleController.text;
     exercise.description = _descriptionController.text;
     exercise.bodyParts
