@@ -6,14 +6,14 @@ import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
 import 'package:my_fit_journey/widgets/svg_highlight.dart';
 
-class ProgramPage extends StatefulWidget {
-  const ProgramPage({super.key});
+class ProgramsPage extends StatefulWidget {
+  const ProgramsPage({super.key});
 
   @override
-  State<ProgramPage> createState() => _ProgramPageState();
+  State<ProgramsPage> createState() => _ProgramsPageState();
 }
 
-class _ProgramPageState extends State<ProgramPage> {
+class _ProgramsPageState extends State<ProgramsPage> {
   late final Map<String, BodyGroup> bodyStructure;
 
   @override
