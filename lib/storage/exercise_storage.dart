@@ -12,6 +12,21 @@ class ExerciseStorage extends ChangeNotifier {
     notifyListeners();
   }
 
+  void insertAt(int index, Exercise exercise) {
+    _exercises.insert(index, exercise);
+    notifyListeners();
+  }
+
+  void moveTo(int oldIndex, int newIndex) {
+    final exercise = _exercises.removeAt(oldIndex);
+    if (newIndex >= _exercises.length) {
+      _exercises.add(exercise);
+    } else {
+      _exercises.insert(newIndex, exercise);
+    }
+    notifyListeners();
+  }
+
   bool contains(String exerciseId) {
     return _exercises.any((e) => e.id == exerciseId);
   }

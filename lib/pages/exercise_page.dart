@@ -231,7 +231,7 @@ class _ExercisePageState extends State<ExercisePage> {
     if (Storage.exerciseStorage.contains(exercise.id)) {
       Storage.exerciseStorage.update(exercise);
     } else {
-      Storage.exerciseStorage.add(exercise);
+      Storage.exerciseStorage.insertAt(0, exercise);
     }
 
     Navigator.of(context).pop();
