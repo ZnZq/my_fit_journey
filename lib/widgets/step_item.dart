@@ -54,27 +54,20 @@ class StepItem extends StatelessWidget {
             ],
           ),
           const SizedBox(height: globalPadding),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return IntrinsicHeight(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: globalPadding * 2),
-                      child: Container(
-                        color: color,
-                        width: 1,
-                      ),
-                    ),
-                    Expanded(child: child),
-                  ],
-                ),
-              );
-            },
-          ),
+          Stack(
+            children: [
+              Positioned(
+                left: globalPadding * 2 - 1,
+                top: 0,
+                bottom: 0,
+                child: Container(width: 1, color: color),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: globalPadding * 4),
+                child: child,
+              ),
+            ],
+          )
         ],
       ),
     );

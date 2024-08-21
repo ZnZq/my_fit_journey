@@ -23,6 +23,8 @@ dependencies:
   uuid: ^4.4.2
   xml: ^6.5.0
   flutter_expandable_fab: ^2.2.0
+  duration_picker: ^1.2.0
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:

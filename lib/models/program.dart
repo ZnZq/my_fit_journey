@@ -55,7 +55,7 @@ class Program {
   }
 }
 
-enum ProgramExerciseType<int> {
+enum ProgramExerciseType {
   complex,
   machineWeight,
   freeWeight,
@@ -87,7 +87,10 @@ extension ProgramExerciseTypeExtension on ProgramExerciseType {
 }
 
 abstract class ProgramExercise {
+  Exercise? _exercise;
   final ProgramExerciseType type;
+
+  Exercise? get exercise => _exercise ??= getExercise();
 
   ProgramExercise({
     required this.type,
@@ -103,6 +106,8 @@ abstract class ProgramExercise {
   }
 
   Set<BodyPart> getBodyParts();
+
+  Exercise? getExercise();
 }
 
 class ProgramOtherExercise extends ProgramExercise {
@@ -121,6 +126,11 @@ class ProgramOtherExercise extends ProgramExercise {
     final exercise = Storage.exerciseStorage.getByKey(exerciseId);
     return exercise?.bodyParts.toSet() ?? {};
   }
+
+  @override
+  Exercise? getExercise() {
+    return Storage.exerciseStorage.getByKey(exerciseId);
+  }
 }
 
 class ProgramSwimmingExercise extends ProgramExercise {
@@ -138,6 +148,11 @@ class ProgramSwimmingExercise extends ProgramExercise {
   Set<BodyPart> getBodyParts() {
     final exercise = Storage.exerciseStorage.getByKey(exerciseId);
     return exercise?.bodyParts.toSet() ?? {};
+  }
+
+  @override
+  Exercise? getExercise() {
+    return Storage.exerciseStorage.getByKey(exerciseId);
   }
 }
 
@@ -173,6 +188,11 @@ class ProgramCardioMachineExercise extends ProgramExercise {
     final exercise = Storage.exerciseStorage.getByKey(exerciseId);
     return exercise?.bodyParts.toSet() ?? {};
   }
+
+  @override
+  Exercise? getExercise() {
+    return Storage.exerciseStorage.getByKey(exerciseId);
+  }
 }
 
 class ProgramBodyWeightExercise extends ProgramExercise {
@@ -190,6 +210,11 @@ class ProgramBodyWeightExercise extends ProgramExercise {
   Set<BodyPart> getBodyParts() {
     final exercise = Storage.exerciseStorage.getByKey(exerciseId);
     return exercise?.bodyParts.toSet() ?? {};
+  }
+
+  @override
+  Exercise? getExercise() {
+    return Storage.exerciseStorage.getByKey(exerciseId);
   }
 }
 
@@ -238,15 +263,20 @@ class ProgramFreeWeightExercise extends ProgramExercise {
     final exercise = Storage.exerciseStorage.getByKey(exerciseId);
     return exercise?.bodyParts.toSet() ?? {};
   }
+
+  @override
+  Exercise? getExercise() {
+    return Storage.exerciseStorage.getByKey(exerciseId);
+  }
 }
 
 class ProgramMachineWeightExercise extends ProgramExercise {
   final String exerciseId;
-  final int sets;
-  final int reps;
-  final int rest;
-  final double weight;
-  final WeightUnit weightUnit;
+  int sets;
+  int reps;
+  int rest;
+  int weight;
+  WeightUnit weightUnit;
 
   ProgramMachineWeightExercise({
     required this.exerciseId,
@@ -284,6 +314,11 @@ class ProgramMachineWeightExercise extends ProgramExercise {
   Set<BodyPart> getBodyParts() {
     final exercise = Storage.exerciseStorage.getByKey(exerciseId);
     return exercise?.bodyParts.toSet() ?? {};
+  }
+
+  @override
+  Exercise? getExercise() {
+    return Storage.exerciseStorage.getByKey(exerciseId);
   }
 }
 
@@ -327,5 +362,10 @@ class ProgramComplexExercise extends ProgramExercise {
     }
 
     return bodyParts;
+  }
+
+  @override
+  Exercise? getExercise() {
+    return null;
   }
 }

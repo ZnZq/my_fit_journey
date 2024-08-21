@@ -39,8 +39,6 @@ class _ExercisePageState extends State<ExercisePage> {
   final _formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
 
-  late final PageController _pageViewController;
-
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _minWeightController;
@@ -58,7 +56,6 @@ class _ExercisePageState extends State<ExercisePage> {
 
   @override
   void initState() {
-    _pageViewController = PageController();
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
 
@@ -89,7 +86,29 @@ class _ExercisePageState extends State<ExercisePage> {
 
   @override
   void dispose() {
-    _pageViewController.dispose();
+    _titleController.dispose();
+    _descriptionController.dispose();
+
+    if (widget.exercise is MachineWeightExercise ||
+        widget.exercise is FreeWeightExercise) {
+      _minWeightController.dispose();
+      _maxWeightController.dispose();
+      _weightStepController.dispose();
+    }
+
+    if (widget.exercise is CardioMachineExercise) {
+      _minSpeedController.dispose();
+      _maxSpeedController.dispose();
+      _speedStepController.dispose();
+      _minIntensityController.dispose();
+      _maxIntensityController.dispose();
+      _intensityStepController.dispose();
+    }
+
+    if (widget.exercise is OtherExercise) {
+      _detailsController.dispose();
+    }
+
     super.dispose();
   }
 
@@ -102,11 +121,13 @@ class _ExercisePageState extends State<ExercisePage> {
     photos.addAll(exercise.photos);
 
     if (exercise is MachineWeightExercise) {
+      weightUnitValue = exercise.weightUnit;
       _minWeightController.text = exercise.minWeight.toString();
       _maxWeightController.text = exercise.maxWeight.toString();
       _weightStepController.text = exercise.weightStep.toString();
     }
     if (exercise is FreeWeightExercise) {
+      weightUnitValue = exercise.weightUnit;
       _minWeightController.text = exercise.minWeight.toString();
       _maxWeightController.text = exercise.maxWeight.toString();
       _weightStepController.text = exercise.weightStep.toString();
@@ -178,15 +199,15 @@ class _ExercisePageState extends State<ExercisePage> {
 
     if (exercise is MachineWeightExercise) {
       exercise.weightUnit = weightUnitValue;
-      exercise.minWeight = double.parse(_minWeightController.text);
-      exercise.maxWeight = double.parse(_maxWeightController.text);
-      exercise.weightStep = double.parse(_weightStepController.text);
+      exercise.minWeight = int.parse(_minWeightController.text);
+      exercise.maxWeight = int.parse(_maxWeightController.text);
+      exercise.weightStep = int.parse(_weightStepController.text);
     }
     if (exercise is FreeWeightExercise) {
       exercise.weightUnit = weightUnitValue;
-      exercise.minWeight = double.parse(_minWeightController.text);
-      exercise.maxWeight = double.parse(_maxWeightController.text);
-      exercise.weightStep = double.parse(_weightStepController.text);
+      exercise.minWeight = int.parse(_minWeightController.text);
+      exercise.maxWeight = int.parse(_maxWeightController.text);
+      exercise.weightStep = int.parse(_weightStepController.text);
     }
     if (exercise is CardioMachineExercise) {
       exercise.minSpeed = double.parse(_minSpeedController.text);
@@ -283,7 +304,8 @@ class _ExercisePageState extends State<ExercisePage> {
           TextFormField(
             controller: _minSpeedController,
             keyboardType: TextInputType.number,
-            validator: _doubleValidatorFn(min: 0),
+            validator: _intValidatorFn(min: 0),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             autovalidateMode: AutovalidateMode.always,
             decoration: InputDecoration(
               labelText: 'min-speed'.i18n(),
@@ -292,7 +314,8 @@ class _ExercisePageState extends State<ExercisePage> {
           TextFormField(
             controller: _maxSpeedController,
             keyboardType: TextInputType.number,
-            validator: _doubleValidatorFn(min: 1),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            validator: _intValidatorFn(min: 1),
             autovalidateMode: AutovalidateMode.always,
             decoration: InputDecoration(
               labelText: 'max-speed'.i18n(),
@@ -301,7 +324,8 @@ class _ExercisePageState extends State<ExercisePage> {
           TextFormField(
             controller: _speedStepController,
             keyboardType: TextInputType.number,
-            validator: _doubleValidatorFn(min: 1),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            validator: _intValidatorFn(min: 1),
             autovalidateMode: AutovalidateMode.always,
             decoration: InputDecoration(
               labelText: 'speed-step'.i18n(),

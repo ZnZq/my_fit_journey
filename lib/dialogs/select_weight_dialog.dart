@@ -9,8 +9,12 @@ class SelectWeightDialog extends StatefulWidget {
   final int step;
   final int count;
 
-  const SelectWeightDialog(
-      {super.key, this.startWeight = 0, this.step = 5, this.count = 10});
+  const SelectWeightDialog({
+    super.key,
+    this.startWeight = 0,
+    this.step = 5,
+    this.count = 10,
+  });
 
   @override
   State<SelectWeightDialog> createState() => _SelectWeightDialogState();
