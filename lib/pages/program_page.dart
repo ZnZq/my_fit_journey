@@ -3,7 +3,7 @@ import 'package:localization/localization.dart';
 import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
 import 'package:my_fit_journey/dialogs/program_exercise_dialog.dart';
-import 'package:my_fit_journey/dialogs/select_exercise_dialog.dart';
+import 'package:my_fit_journey/dialogs/exercise_picker.dart';
 import 'package:my_fit_journey/models/exercise.dart';
 import 'package:my_fit_journey/models/exercise_step.dart';
 import 'package:my_fit_journey/models/program.dart';
@@ -88,7 +88,7 @@ class _ProgramPageState extends State<ProgramPage> {
     final exercise = await showDialog<Exercise?>(
       context: context,
       builder: (context) {
-        return const SelectExerciseDialog();
+        return const ExercisePicker();
       },
     );
 

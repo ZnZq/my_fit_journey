@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
-import 'package:localization/localization.dart';
 import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
-import 'package:my_fit_journey/models/body_weight_exercise.dart';
-import 'package:my_fit_journey/models/cardio_machine_exercise.dart';
-import 'package:my_fit_journey/models/exercise.dart';
-import 'package:my_fit_journey/models/free_weight_exercise.dart';
-import 'package:my_fit_journey/models/machine_weight_exercise.dart';
-import 'package:my_fit_journey/models/other_exercise.dart';
 import 'package:my_fit_journey/models/program.dart';
-import 'package:my_fit_journey/models/swimming_exercise.dart';
-import 'package:my_fit_journey/pages/exercise_page.dart';
 import 'package:my_fit_journey/pages/exercises_page.dart';
-import 'package:my_fit_journey/pages/extensions.dart';
 import 'package:my_fit_journey/pages/program_page.dart';
 import 'package:my_fit_journey/pages/programs_page.dart';
 import 'package:my_fit_journey/pages/profile_page.dart';
@@ -66,99 +56,7 @@ class _MainPageState extends State<MainPage> {
         label: 'Exercises',
         page: const ExercisesPage(),
         floatingActionButtonLocation: ExpandableFab.location,
-        floatingActionButton: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: kBackgroundColor,
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                kBackgroundColor.mix(kDarkShadowColor, .75),
-                kBackgroundColor,
-                kBackgroundColor,
-                kBackgroundColor.mix(kLightShadowColor, .75),
-              ],
-              stops: const [0.0, .3, .6, 1.0],
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: kLightShadowColor,
-                offset: Offset(-4, -4),
-                blurRadius: 4,
-                spreadRadius: 1,
-              ),
-              BoxShadow(
-                color: kDarkShadowColor,
-                offset: Offset(4, 4),
-                blurRadius: 4,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          child: IconButton(
-            onPressed: () async {
-              final exercise = await showDialog<Exercise?>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  backgroundColor: kBackgroundColor,
-                  title: Text(
-                    'add-exercise'.i18n(),
-                  ),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildAddExerciseOption(
-                        'machine-weight'.i18n(),
-                        Icons.gavel_rounded,
-                        ExerciseType.machineWeight.color,
-                        MachineWeightExercise.empty(),
-                        paddingTop: 0,
-                      ),
-                      _buildAddExerciseOption(
-                        'free-weight'.i18n(),
-                        Icons.rowing_rounded,
-                        ExerciseType.freeWeight.color,
-                        FreeWeightExercise.empty(),
-                      ),
-                      _buildAddExerciseOption(
-                        'body-weight'.i18n(),
-                        Icons.sports_gymnastics,
-                        ExerciseType.bodyWeight.color,
-                        BodyWeightExercise.empty(),
-                      ),
-                      _buildAddExerciseOption(
-                        'cardio-machine'.i18n(),
-                        Icons.monitor_heart_rounded,
-                        ExerciseType.cardioMachine.color,
-                        CardioMachineExercise.empty(),
-                      ),
-                      _buildAddExerciseOption(
-                        'swimming'.i18n(),
-                        Icons.pool_rounded,
-                        ExerciseType.swimming.color,
-                        SwimmingExercise.empty(),
-                      ),
-                      _buildAddExerciseOption(
-                        'other'.i18n(),
-                        Icons.pie_chart_outline_sharp,
-                        ExerciseType.other.color,
-                        OtherExercise.empty(),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-
-              if (exercise != null) {
-                _addExercise(exercise);
-              }
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ),
+        floatingActionButton: null,
       ),
       Destination(
         icon: const Icon(Icons.boy_rounded),
@@ -174,54 +72,6 @@ class _MainPageState extends State<MainPage> {
         page: ProfilePage(),
       ),
     ];
-  }
-
-  Widget _buildAddExerciseOption(
-    String text,
-    IconData icon,
-    Color color,
-    Exercise exercise, {
-    double paddingTop = kGap * 2,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(top: paddingTop),
-      child: Container(
-        padding: const EdgeInsets.all(kGap),
-        decoration: BoxDecoration(
-          color: kBackgroundColor,
-          borderRadius: BorderRadius.circular(kGap * 2),
-          boxShadow: const [
-            BoxShadow(
-              color: kDarkShadowColor,
-              offset: Offset(4, 4),
-              spreadRadius: 1,
-              blurRadius: 4,
-            ),
-            BoxShadow(
-              color: kLightShadowColor,
-              offset: Offset(-4, -4),
-              spreadRadius: 1,
-              blurRadius: 4,
-            ),
-          ],
-        ),
-        child: InkWell(
-          onTap: () {
-            Navigator.of(context).pop(exercise);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(kGap),
-            child: Row(
-              children: [
-                Icon(icon, color: color),
-                const SizedBox(width: kGap),
-                Text(text),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   @override
@@ -264,45 +114,50 @@ class _MainPageState extends State<MainPage> {
       // ),
       backgroundColor: kBackgroundColor,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              clipBehavior: Clip.hardEdge,
-              padding: const EdgeInsets.only(top: 80),
-              decoration: const BoxDecoration(),
-              child: destination.page ??
-                  const Center(
-                    child: Text('Not implemented yet'),
-                  ),
+        child: destination.page ??
+            const Center(
+              child: Text('Not implemented yet'),
             ),
-            Container(
-              decoration: const BoxDecoration(
-                color: kBackgroundColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: kDarkShadowColor,
-                    offset: Offset(0, 2),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(kGap * 2),
-                child: Row(
-                  children: [
-                    Text(
-                      destination.label,
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                    const Spacer(),
-                    destination.floatingActionButton ?? const SizedBox.shrink(),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        // child: Stack(
+        //   children: [
+        // Container(
+        //   clipBehavior: Clip.hardEdge,
+        //   padding: EdgeInsets.only(top: _containerHeight + kGap),
+        //   decoration: const BoxDecoration(),
+        //   child: destination.page ??
+        //       const Center(
+        //         child: Text('Not implemented yet'),
+        //       ),
+        // ),
+        // Container(
+        //   key: _containerKey,
+        //   decoration: const BoxDecoration(
+        //     color: kBackgroundColor,
+        //     boxShadow: [
+        //       BoxShadow(
+        //         color: kDarkShadowColor,
+        //         offset: Offset(2, 2),
+        //         spreadRadius: 1,
+        //         blurRadius: 2,
+        //       ),
+        //     ],
+        //   ),
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(kGap * 2),
+        //     child: Row(
+        //       children: [
+        //         Text(
+        //           destination.label,
+        //           style: Theme.of(context).textTheme.headlineLarge,
+        //         ),
+        //         const Spacer(),
+        //         destination.floatingActionButton ?? const SizedBox.shrink(),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        // ],
+        // ),
       ),
       // floatingActionButtonLocation: destination.floatingActionButtonLocation,
       // floatingActionButton: destination.floatingActionButton,
@@ -321,9 +176,5 @@ class _MainPageState extends State<MainPage> {
 
   void _addProgram(Program program) {
     Navigator.of(context).pushNamed(ProgramPage.route, arguments: program);
-  }
-
-  void _addExercise(Exercise exercise) {
-    Navigator.of(context).pushNamed(ExercisePage.route, arguments: exercise);
   }
 }
