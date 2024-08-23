@@ -41,18 +41,18 @@ class _SelectWeightDialogState extends State<SelectWeightDialog> {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: globalPadding,
-          horizontal: globalPadding * 2,
+          vertical: kGap,
+          horizontal: kGap * 2,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: globalPadding),
+            const SizedBox(height: kGap),
             const Text('This is a typical dialog.'),
-            const SizedBox(height: globalPadding),
+            const SizedBox(height: kGap),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: globalPadding),
+              padding: const EdgeInsets.symmetric(horizontal: kGap),
               child: TextField(
                 controller: _startWeightController,
                 keyboardType: TextInputType.number,
@@ -64,7 +64,7 @@ class _SelectWeightDialogState extends State<SelectWeightDialog> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: globalPadding),
+              padding: const EdgeInsets.symmetric(horizontal: kGap),
               child: TextField(
                 controller: _stepController,
                 keyboardType: TextInputType.number,

@@ -150,33 +150,95 @@ class _ExercisePageState extends State<ExercisePage> {
     final steps = _getSteps();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'new'.i18n([exerciseTypeMap[widget.exercise.type]!.i18n()]),
-        ),
-      ),
+      // appBar: AppBar(
+      //   title: Text(
+      //     'new'.i18n([exerciseTypeMap[widget.exercise.type]!.i18n()]),
+      //   ),
+      // ),
+      // floatingActionButtonLocation: ExpandableFab.location,
+      backgroundColor: kBackgroundColor,
       floatingActionButton: FloatingActionButton(
+        heroTag: 'save-${widget.exercise.id}',
         onPressed: _onSave,
         child: Icon(Icons.save),
       ),
       body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
+        child: Column(
+          children: [
+            Row(
               children: [
-                const SizedBox(height: globalPadding),
-                for (var step in steps)
-                  StepItem(
-                    index: steps.indexOf(step) + 1,
-                    title: Text(step.title),
-                    actions: Row(children: step.actions),
-                    child: step.content,
+                Padding(
+                  padding: const EdgeInsets.all(kGap * 2),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: kBackgroundColor,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: kLightShadowColor,
+                          offset: Offset(-5, -5),
+                          blurRadius: 5,
+                          spreadRadius: 1,
+                        ),
+                        BoxShadow(
+                          color: kDarkShadowColor,
+                          offset: Offset(5, 5),
+                          blurRadius: 5,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.arrow_back, color: Colors.grey.shade800),
+                    ),
                   ),
-                const SizedBox(height: globalPadding),
+                ),
+                Text(
+                  'new'.i18n([exerciseTypeMap[widget.exercise.type]!.i18n()]),
+                  style: TextStyle(
+                    color: Colors.grey.shade800,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer()
               ],
             ),
-          ),
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: kGap),
+                      for (var step in steps)
+                        Padding(
+                          padding: const EdgeInsets.only(left: kGap * 2),
+                          child: StepItem(
+                            index: steps.indexOf(step) + 1,
+                            title: Text(
+                              step.title,
+                              style: TextStyle(
+                                color: Colors.grey.shade800,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            actions: Row(children: step.actions),
+                            child: step.content,
+                          ),
+                        ),
+                      const SizedBox(height: kGap),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -258,8 +320,7 @@ class _ExercisePageState extends State<ExercisePage> {
         actions: _buildExercisePhotosActions(),
         content: _buildExercisePhotos(),
       ),
-      if (widget.exercise is MachineWeightExercise ||
-          widget.exercise is FreeWeightExercise)
+      if (widget.exercise is WeightExercise)
         ExerciseStep(
           title: 'exercise-specifications'.i18n(),
           content: _buildWeightExerciseSpecifications(),
@@ -279,7 +340,7 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Widget _buildOtherExerciseSpecifications() {
     return Padding(
-      padding: const EdgeInsets.only(right: globalPadding * 2),
+      padding: const EdgeInsets.only(right: kGap * 2),
       child: Column(
         children: [
           TextFormField(
@@ -298,7 +359,7 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Widget _buildCardioMachineExerciseSpecifications() {
     return Padding(
-      padding: const EdgeInsets.only(right: globalPadding * 2),
+      padding: const EdgeInsets.only(right: kGap * 2),
       child: Column(
         children: [
           TextFormField(
@@ -331,7 +392,7 @@ class _ExercisePageState extends State<ExercisePage> {
               labelText: 'speed-step'.i18n(),
             ),
           ),
-          SizedBox(height: globalPadding * 2),
+          SizedBox(height: kGap * 2),
           TextFormField(
             controller: _minIntensityController,
             keyboardType: TextInputType.number,
@@ -369,7 +430,8 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Widget _buildWeightExerciseSpecifications() {
     return Padding(
-      padding: const EdgeInsets.only(right: globalPadding * 2),
+      padding:
+          const EdgeInsets.only(right: kGap * 2, bottom: kGap * 2, top: kGap),
       child: Column(
         children: [
           DropdownButtonFormField<WeightUnit>(
@@ -416,7 +478,7 @@ class _ExercisePageState extends State<ExercisePage> {
             decoration: InputDecoration(
               labelText: 'weight-step'.i18n(),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -479,7 +541,7 @@ class _ExercisePageState extends State<ExercisePage> {
         },
         child: Text('choice'.i18n()),
       ),
-      SizedBox(width: globalPadding),
+      SizedBox(width: kGap),
     ];
   }
 
@@ -506,7 +568,7 @@ class _ExercisePageState extends State<ExercisePage> {
           // ),
         ],
       ),
-      SizedBox(width: globalPadding),
+      SizedBox(width: kGap),
     ];
   }
 
@@ -576,27 +638,30 @@ class _ExercisePageState extends State<ExercisePage> {
   }
 
   Widget _buildExercisePhotos() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          if (photos.isEmpty) ...[
-            Text('No photos added'),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: kGap, top: kGap),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            if (photos.isEmpty) ...[
+              Text('No photos added'),
+            ],
+            for (var photo in photos) _buildPhotoCard(context, photo),
+            const SizedBox(width: kGap),
           ],
-          for (var photo in photos) _buildPhotoCard(context, photo),
-          const SizedBox(width: globalPadding),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildRargetMuscles() {
     return Padding(
-      padding: const EdgeInsets.only(right: globalPadding * 2),
+      padding: const EdgeInsets.only(right: kGap * 2),
       child: SizedBox(
         height: 300,
         child: Padding(
-          padding: const EdgeInsets.all(globalPadding),
+          padding: const EdgeInsets.all(kGap),
           child: Row(
             children: [
               Flexible(
@@ -620,7 +685,7 @@ class _ExercisePageState extends State<ExercisePage> {
 
   Widget _buildExerciseDetails() {
     return Padding(
-      padding: const EdgeInsets.only(right: globalPadding * 2),
+      padding: const EdgeInsets.only(right: kGap * 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -647,7 +712,7 @@ class _ExercisePageState extends State<ExercisePage> {
               labelText: 'description'.i18n(),
             ),
           ),
-          SizedBox(height: globalPadding * 2),
+          SizedBox(height: kGap * 2),
         ],
       ),
     );
@@ -719,7 +784,7 @@ class _ExercisePageState extends State<ExercisePage> {
                 },
                 icon: Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(globalPadding),
+                    padding: const EdgeInsets.all(kGap),
                     child: Icon(
                       deletedPhotos.contains(photo)
                           ? Icons.settings_backup_restore_rounded

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:localization/localization.dart';
+import 'package:my_fit_journey/const.dart';
 import 'package:my_fit_journey/data.dart';
 import 'package:my_fit_journey/models/exercise.dart';
 import 'package:my_fit_journey/models/program.dart';
@@ -41,6 +42,7 @@ class MainAppState extends State<MainApp> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: buildLightTheme(context),
       locale: locale,
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,

@@ -88,7 +88,7 @@ class _BodyStructureSelectorState extends State<BodyStructureSelector>
               flex: 1,
               fit: FlexFit.loose,
               child: Padding(
-                padding: const EdgeInsets.only(left: globalPadding),
+                padding: const EdgeInsets.only(left: kGap),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.8,
                   child: _buildBodyStructure(frontBodyStructure, true),
@@ -120,7 +120,7 @@ class _BodyStructureSelectorState extends State<BodyStructureSelector>
               flex: 1,
               fit: FlexFit.loose,
               child: Padding(
-                padding: const EdgeInsets.only(right: globalPadding),
+                padding: const EdgeInsets.only(right: kGap),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.8,
                   child: _buildBodyStructure(backBodyStructure, false),
@@ -238,8 +238,8 @@ class _BodyStructureSelectorState extends State<BodyStructureSelector>
           ),
           color: Colors.white,
         ),
-        margin: EdgeInsets.fromLTRB(isFront ? globalPadding * 3 : 2, 2,
-            isFront ? 2 : globalPadding * 3, 2),
+        margin: EdgeInsets.fromLTRB(
+            isFront ? kGap * 3 : 2, 2, isFront ? 2 : kGap * 3, 2),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Text(
           group.value.title.i18n(),
@@ -253,8 +253,7 @@ class _BodyStructureSelectorState extends State<BodyStructureSelector>
   Widget _buildBodyPartSelector(MapEntry<String, BodyPart> part, bool isFront) {
     return ListTile(
       contentPadding: EdgeInsets.only(
-          left: isFront ? globalPadding * 3 : 0,
-          right: isFront ? 0 : globalPadding * 3),
+          left: isFront ? kGap * 3 : 0, right: isFront ? 0 : kGap * 3),
       leading: isFront
           ? (selectedParts.contains(part.value)
               ? const Icon(Icons.circle_rounded, color: Colors.indigo)

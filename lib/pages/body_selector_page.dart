@@ -32,7 +32,7 @@ class BodySelectorPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(globalPadding),
+        padding: const EdgeInsets.all(kGap),
         child: Row(
           children: [
             Expanded(
@@ -43,7 +43,7 @@ class BodySelectorPage extends StatelessWidget {
                 child: Text('cancel'.i18n()),
               ),
             ),
-            const SizedBox(width: globalPadding),
+            const SizedBox(width: kGap),
             Expanded(
               child: FilledButton(
                 onPressed: () {

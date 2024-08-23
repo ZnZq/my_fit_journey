@@ -138,7 +138,7 @@ class _ProgramPageState extends State<ProgramPage> {
 
   Widget _buildExercises() {
     return Padding(
-      padding: const EdgeInsets.only(left: globalPadding, right: globalPadding),
+      padding: const EdgeInsets.only(left: kGap, right: kGap),
       child: ReorderableListView.builder(
         clipBehavior: Clip.none,
         shrinkWrap: true,
@@ -195,7 +195,7 @@ class _ProgramPageState extends State<ProgramPage> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(globalPadding * 2),
+                    padding: EdgeInsets.all(kGap * 2),
                     child: Icon(
                       Icons.delete,
                       color: Colors.white,
@@ -224,8 +224,8 @@ class _ProgramPageState extends State<ProgramPage> {
                 });
               },
               contentPadding: const EdgeInsets.only(
-                left: globalPadding * 3,
-                right: globalPadding,
+                left: kGap * 3,
+                right: kGap,
               ),
               title: Text(exercise?.title ?? 'not found'),
               subtitle: Column(
@@ -264,10 +264,10 @@ class _ProgramPageState extends State<ProgramPage> {
           ),
         ),
         Positioned(
-          left: -globalPadding * 1.5,
-          top: globalPadding * 3,
+          left: -kGap * 1.5,
+          top: kGap * 3,
           child: CircleAvatar(
-            radius: globalPadding * 2,
+            radius: kGap * 2,
             child: Text(
               (index + 1).toString(),
               style: const TextStyle(fontSize: 12),
@@ -298,7 +298,7 @@ class _ProgramPageState extends State<ProgramPage> {
 
   Widget _buildProgramDetails() {
     return Padding(
-      padding: const EdgeInsets.only(right: globalPadding * 2),
+      padding: const EdgeInsets.only(right: kGap * 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -325,7 +325,7 @@ class _ProgramPageState extends State<ProgramPage> {
               labelText: 'description'.i18n(),
             ),
           ),
-          const SizedBox(height: globalPadding * 2),
+          const SizedBox(height: kGap * 2),
         ],
       ),
     );
@@ -349,7 +349,7 @@ class _ProgramPageState extends State<ProgramPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: globalPadding),
+                const SizedBox(height: kGap),
                 for (var step in steps)
                   StepItem(
                     index: steps.indexOf(step) + 1,
@@ -357,7 +357,7 @@ class _ProgramPageState extends State<ProgramPage> {
                     actions: Row(children: step.actions),
                     child: step.content,
                   ),
-                const SizedBox(height: globalPadding),
+                const SizedBox(height: kGap),
               ],
             ),
           ),

@@ -18,7 +18,7 @@ class SelectExerciseDialog extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(globalPadding * 2),
+              padding: const EdgeInsets.all(kGap * 2),
               child: Text('select-exercise'.i18n()),
             ),
             const Divider(height: 1),
@@ -41,16 +41,16 @@ class SelectExerciseDialog extends StatelessWidget {
                             color: Colors.grey,
                           ),
                         ),
-                        const SizedBox(height: globalPadding / 2),
+                        const SizedBox(height: kGap / 2),
                         Container(
                           decoration: BoxDecoration(
                             color: exercise.type.color,
-                            borderRadius: BorderRadius.circular(globalPadding),
+                            borderRadius: BorderRadius.circular(kGap),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: globalPadding,
-                              vertical: globalPadding / 4,
+                              horizontal: kGap,
+                              vertical: kGap / 4,
                             ),
                             child: Text(
                               exercise.type.toString().split('.').last,

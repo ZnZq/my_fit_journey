@@ -59,7 +59,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(globalPadding * 2),
+              padding: const EdgeInsets.all(kGap * 2),
               child: Column(
                 children: [
                   Text(widget.programExercise.exercise!.title),
@@ -78,7 +78,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
             const Divider(height: 1),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(globalPadding * 2),
+                padding: const EdgeInsets.all(kGap * 2),
                 child: Row(
                   children: [
                     Expanded(
@@ -101,7 +101,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
             ),
             const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.all(globalPadding),
+              padding: const EdgeInsets.all(kGap),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -111,7 +111,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                     },
                     child: Text('cancel'.i18n()),
                   ),
-                  const SizedBox(width: globalPadding),
+                  const SizedBox(width: kGap),
                   TextButton(
                     onPressed: () {
                       final programExercise = ProgramExerciseFactory.fromJson(
@@ -183,7 +183,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
             });
           },
         ),
-        Divider(height: 1, color: Colors.grey[300]),
+        Divider(height: 1, color: kBackgroundColor),
         ListTile(
           visualDensity: const VisualDensity(vertical: -3),
           title: Text('weight'.i18n()),
@@ -216,7 +216,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
             });
           },
         ),
-        Divider(height: 1, color: Colors.grey[300]),
+        Divider(height: 1, color: kBackgroundColor),
         ListTile(
           visualDensity: const VisualDensity(vertical: -3),
           title: Text('rest'.i18n()),

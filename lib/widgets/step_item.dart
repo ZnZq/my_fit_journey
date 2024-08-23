@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
+import 'package:flutter_inset_shadow/flutter_inset_shadow.dart';
 import 'package:my_fit_journey/const.dart';
 
 class StepItem extends StatelessWidget {
@@ -21,8 +22,8 @@ class StepItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-        left: globalPadding,
-        bottom: globalPadding,
+        left: kGap,
+        bottom: kGap,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,40 +31,76 @@ class StepItem extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: globalPadding * 4 + 1,
-                height: globalPadding * 4 + 1,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(globalPadding * 4),
+                width: kGap * 4 + 1,
+                height: kGap * 4 + 1,
+                decoration: const BoxDecoration(
+                  color: kBackgroundColor,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: kLightShadowColor,
+                      offset: Offset(-3, -3),
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      inset: true,
+                    ),
+                    BoxShadow(
+                      color: kDarkShadowColor,
+                      offset: Offset(3, 3),
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      inset: true,
+                    ),
+                  ],
                 ),
                 child: Center(
                   child: Text(
                     index.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade800,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: globalPadding),
+              const SizedBox(width: kGap * 2),
               Expanded(child: title),
               const Spacer(),
               actions,
-              const SizedBox(width: globalPadding),
+              const SizedBox(width: kGap * 2),
             ],
           ),
-          const SizedBox(height: globalPadding),
+          const SizedBox(height: kGap),
           Stack(
             children: [
               Positioned(
-                left: globalPadding * 2 - 1,
+                left: kGap * 2 - 1,
                 top: 0,
                 bottom: 0,
-                child: Container(width: 1, color: color),
+                child: Container(
+                  width: 1,
+                  decoration: const BoxDecoration(
+                    color: kBackgroundColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: kLightShadowColor,
+                        offset: Offset(-1, -1),
+                        blurRadius: 1,
+                        spreadRadius: 1,
+                      ),
+                      BoxShadow(
+                        color: kDarkShadowColor,
+                        offset: Offset(1, 1),
+                        blurRadius: 1,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: globalPadding * 4),
+                padding: const EdgeInsets.only(left: kGap * 4),
                 child: child,
               ),
             ],

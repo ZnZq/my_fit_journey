@@ -26,7 +26,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: globalPadding, right: globalPadding),
+      padding: const EdgeInsets.only(left: kGap, right: kGap),
       child: ListenableBuilder(
         listenable: Storage.exerciseStorage,
         builder: (context, child) {
@@ -53,7 +53,7 @@ class _ProgramsPageState extends State<ProgramsPage> {
         width: double.infinity,
         height: 150,
         child: Padding(
-          padding: const EdgeInsets.all(globalPadding),
+          padding: const EdgeInsets.all(kGap),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
